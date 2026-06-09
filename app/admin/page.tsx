@@ -269,15 +269,17 @@ export default function AdminPage() {
         body: JSON.stringify(content),
       })
       
+      const data = await res.json()
+      
       if (!res.ok) {
-        throw new Error("Server failed to save")
+        throw new Error(data.error || "Server failed to save")
       }
       
       loadedContentRef.current = content
       setSaved(true)
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to save to database:", err)
-      alert("Failed to save changes to server database! Local storage cache updated.")
+      alert(`Failed to save changes: ${err.message || err}`)
     } finally {
       setTimeout(() => setSaved(false), 2000)
     }

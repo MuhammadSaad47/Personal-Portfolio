@@ -1,65 +1,90 @@
 import { NextResponse } from "next/server"
 import fs from "fs/promises"
 import path from "path"
+import { MongoClient } from "mongodb"
 
 export const dynamic = "force-dynamic"
 
 const contentFilePath = path.join(process.cwd(), "data", "content.json")
+const mongoUri = process.env.MONGODB_URI
 
-// Vercel KV environment variables (injected by Vercel Integration)
-const kvUrl = process.env.KV_REST_API_URL
-const kvToken = process.env.KV_REST_API_TOKEN
+// Cache connection globally to reuse it in serverless environment
+let cachedClient: MongoClient | null = null
 
-async function getKVContent() {
-  if (!kvUrl || !kvToken) return null
+async function getMongoClient() {
+  if (!mongoUri) return null
+  if (cachedClient) return cachedClient
+
   try {
-    const res = await fetch(`${kvUrl}/get/portfolio_content`, {
-      headers: {
-        Authorization: `Bearer ${kvToken}`
-      },
-      next: { revalidate: 0 } // Disable fetch caching
+    const client = new MongoClient(mongoUri, {
+      connectTimeoutMS: 5000, // Short timeout for serverless
+      socketTimeoutMS: 15000,
     })
-    if (!res.ok) return null
-    const data = await res.json()
-    if (data && typeof data.result === "string") {
-      return JSON.parse(data.result)
+    await client.connect()
+    cachedClient = client
+    return client
+  } catch (err: any) {
+    console.error("MongoDB Connection Error:", err)
+    throw new Error(`Database Connection Error: ${err.message || err}`)
+  }
+}
+
+async function getMongoDBContent() {
+  const client = await getMongoClient()
+  if (!client) return null
+  try {
+    const db = client.db("portfolio")
+    const collection = db.collection("content")
+    
+    const document = await collection.findOne({ id: "main_portfolio_content" })
+    if (document) {
+      const { _id, ...rest } = document
+      return rest
     }
-  } catch (err) {
-    console.error("KV Read Error:", err)
+  } catch (err: any) {
+    throw new Error(`Database Read Error: ${err.message || err}`)
   }
   return null
 }
 
-async function setKVContent(content: any) {
-  if (!kvUrl || !kvToken) return false
+async function setMongoDBContent(content: any) {
+  const client = await getMongoClient()
+  if (!client) {
+    throw new Error("Could not connect to MongoDB. Verify your connection string and credentials.")
+  }
   try {
-    const res = await fetch(`${kvUrl}/set/portfolio_content`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${kvToken}`
-      },
-      body: JSON.stringify(JSON.stringify(content))
-    })
-    return res.ok
-  } catch (err) {
-    console.error("KV Write Error:", err)
-    return false
+    const db = client.db("portfolio")
+    const collection = db.collection("content")
+    
+    const res = await collection.replaceOne(
+      { id: "main_portfolio_content" },
+      { id: "main_portfolio_content", ...content },
+      { upsert: true }
+    )
+    if (!res.acknowledged) {
+      throw new Error("MongoDB write request was not acknowledged.")
+    }
+    return true
+  } catch (err: any) {
+    throw new Error(`Database Write Error: ${err.message || err}`)
   }
 }
 
 export async function GET() {
-  // Try to load from Vercel KV
-  const kvContent = await getKVContent()
-  if (kvContent) {
-    return NextResponse.json(kvContent)
-  }
-
-  // Fallback to local data/content.json
   try {
+    // Try to load from MongoDB if URI is configured
+    if (mongoUri) {
+      const dbContent = await getMongoDBContent()
+      if (dbContent) {
+        return NextResponse.json(dbContent)
+      }
+    }
+
+    // Fallback to local data/content.json file
     const fileContent = await fs.readFile(contentFilePath, "utf-8")
     return NextResponse.json(JSON.parse(fileContent))
-  } catch (err) {
-    return NextResponse.json({ error: "Failed to read local content" }, { status: 500 })
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message || "Failed to load content" }, { status: 500 })
   }
 }
 
@@ -67,15 +92,13 @@ export async function POST(req: Request) {
   try {
     const body = await req.json()
     
-    // If Vercel KV is configured, persist to KV
-    if (kvUrl && kvToken) {
-      const ok = await setKVContent(body)
-      if (ok) {
-        return NextResponse.json({ success: true, storage: "kv" })
-      }
+    // If MongoDB URI is configured, persist to cloud database
+    if (mongoUri) {
+      await setMongoDBContent(body)
+      return NextResponse.json({ success: true, storage: "mongodb" })
     }
 
-    // In local development, write directly to the local JSON file
+    // Otherwise, fallback to writing directly to local JSON file
     await fs.writeFile(contentFilePath, JSON.stringify(body, null, 2), "utf-8")
     return NextResponse.json({ success: true, storage: "file" })
   } catch (err: any) {
