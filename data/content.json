@@ -1,0 +1,161 @@
+{
+  "profile": {
+    "name": "Muhammad Saad",
+    "titles": [
+      "Computer Engineer",
+      "Agentic AI & Web Developer",
+      "Embedded Systems Developer",
+      "IoT & Hardware Architect",
+      "FPGA & RISC-V Designer",
+      "AI-Collaborative Software Engineer"
+    ],
+    "email": "u2023499@giki.edu.pk",
+    "github": "https://github.com/MuhammadSaad47",
+    "linkedin": "",
+    "location": "Darra Adam Khel, Akhorwal, FR Kohat, FATA, Pakistan",
+    "university": "Ghulam Ishaq Khan Institute of Engineering Sciences and Technology (GIKI)",
+    "degree": "BS Computer Engineering — Final Year",
+    "bio": "A passionate Computer Engineering student specializing in Hardware Architecture, IoT, and Embedded Systems. Leveraging advanced agentic workflows and 'vibe coding' methodologies, I collaborate with AI agents to architect and deploy high-performance full-stack applications with exceptional speed. I thrive at the intersection of physical hardware, low-level FPGA design, and next-generation AI-collaborative software engineering.",
+    "profileImage": "/placeholder-user.jpg",
+    "resumeUrl": "/placeholder.svg"
+  },
+  "specializations": [
+    "IoT",
+    "FPGA",
+    "RISC-V",
+    "Embedded C",
+    "Computer Architecture"
+  ],
+  "skills": {
+    "languages": [
+      { "name": "C", "level": 90 },
+      { "name": "C++", "level": 85 },
+      { "name": "Python", "level": 80 },
+      { "name": "Verilog", "level": 85 },
+      { "name": "SystemVerilog", "level": 80 },
+      { "name": "PostgreSQL", "level": 75 },
+      { "name": "React", "level": 70 }
+    ],
+    "libraries": [
+      { "name": "NumPy", "level": 75 },
+      { "name": "Pandas", "level": 70 },
+      { "name": "OpenCV", "level": 80 },
+      { "name": "FastAPI", "level": 75 },
+      { "name": "SQLAlchemy", "level": 70 }
+    ],
+    "hardware": [
+      { "name": "ESP32", "level": 90 },
+      { "name": "Arduino", "level": 95 },
+      { "name": "Raspberry Pi", "level": 85 },
+      { "name": "Microcontrollers", "level": 90 }
+    ],
+    "domains": [
+      { "name": "Digital Logic Design", "level": 90 },
+      { "name": "Embedded Systems", "level": 95 },
+      { "name": "Computer Architecture", "level": 85 },
+      { "name": "Agentic AI & Vibe Coding", "level": 95 }
+    ]
+  },
+  "projects": [
+    {
+      "id": "1",
+      "title": "IoT-Based Health Monitoring System",
+      "description": "A comprehensive health monitoring solution using ESP32 microcontroller that tracks vital signs in real-time and transmits data to a cloud dashboard for remote patient monitoring.",
+      "tags": ["IoT", "Embedded C", "ESP32"],
+      "category": "IoT",
+      "github": "https://github.com/MuhammadSaad47",
+      "live": "",
+      "thumbnail": "/placeholder.jpg"
+    },
+    {
+      "id": "2",
+      "title": "Digital Door Lock System",
+      "description": "A secure digital door lock system featuring keypad input, RFID authentication, and remote access capabilities with real-time notifications.",
+      "tags": ["Embedded C", "Hardware"],
+      "category": "Hardware",
+      "github": "https://github.com/MuhammadSaad47",
+      "live": "",
+      "thumbnail": "/placeholder.jpg"
+    },
+    {
+      "id": "3",
+      "title": "ECG Monitoring System",
+      "description": "A medical-grade ECG monitoring system with signal processing algorithms for heart rate detection, arrhythmia analysis, and data visualization.",
+      "tags": ["Hardware", "Signal Processing"],
+      "category": "Hardware",
+      "github": "https://github.com/MuhammadSaad47",
+      "live": "",
+      "thumbnail": "/placeholder.jpg"
+    },
+    {
+      "id": "4",
+      "title": "RISC-V 5-Stage Pipeline Processor",
+      "description": "A custom RISC-V processor implementation featuring a 5-stage pipeline architecture with custom MAC (Multiply-Accumulate) operation support, designed in Verilog.",
+      "tags": ["FPGA", "Verilog", "Computer Architecture"],
+      "category": "Hardware",
+      "github": "https://github.com/MuhammadSaad47",
+      "live": "",
+      "thumbnail": "/placeholder.jpg"
+    },
+    {
+      "id": "5",
+      "title": "Facial Attendance Management System",
+      "description": "An automated attendance system using computer vision and facial recognition with FastAPI backend for efficient classroom management.",
+      "tags": ["Python", "OpenCV", "FastAPI"],
+      "category": "Software",
+      "github": "https://github.com/MuhammadSaad47",
+      "live": "",
+      "thumbnail": "/placeholder.jpg"
+    },
+    {
+      "id": "6",
+      "title": "DAK Welfare Organization App",
+      "description": "A full-stack React application for managing welfare organization activities, donations tracking, and beneficiary management.",
+      "tags": ["React", "Full-Stack"],
+      "category": "Full-Stack",
+      "github": "https://github.com/MuhammadSaad47",
+      "live": "",
+      "thumbnail": "/placeholder.jpg"
+    },
+    {
+      "id": "7",
+      "title": "Akhorwal Coal Company Database System",
+      "description": "A robust database management system for coal mining operations featuring inventory tracking, sales management, and comprehensive reporting.",
+      "tags": ["PostgreSQL", "SQLAlchemy"],
+      "category": "Software",
+      "github": "https://github.com/MuhammadSaad47",
+      "live": "",
+      "thumbnail": "/placeholder.jpg"
+    },
+    {
+      "id": "8",
+      "title": "Pharmacy Management System",
+      "description": "A complete pharmacy management solution with inventory control, prescription tracking, billing system, and expiry date alerts.",
+      "tags": ["Python", "PostgreSQL"],
+      "category": "Software",
+      "github": "https://github.com/MuhammadSaad47",
+      "live": "",
+      "thumbnail": "/placeholder.jpg"
+    }
+  ],
+  "education": [
+    {
+      "id": "1",
+      "institution": "Ghulam Ishaq Khan Institute of Engineering Sciences and Technology",
+      "degree": "BS Computer Engineering",
+      "period": "2021 - Present",
+      "status": "Final Year",
+      "coursework": ["Digital Logic Design", "Embedded Systems", "Computer Architecture"]
+    }
+  ],
+  "experience": [
+    {
+      "id": "1",
+      "company": "Open to Opportunities",
+      "position": "Seeking Internships & Research Roles",
+      "period": "Present",
+      "description": "Actively seeking internships and research positions in embedded systems, FPGA design, and IoT development.",
+      "isPlaceholder": true
+    }
+  ]
+}
