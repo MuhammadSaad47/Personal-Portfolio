@@ -211,14 +211,33 @@ export default function AdminPage() {
       setIsAuthenticated(true)
     }
     
-    const savedContent = localStorage.getItem("portfolio_content")
-    if (savedContent) {
-      const parsed = JSON.parse(savedContent)
-      setContent(parsed)
-      loadedContentRef.current = parsed
-    } else {
-      loadedContentRef.current = initialContent
-    }
+    // Load dynamically from database API route
+    fetch("/api/content")
+      .then((res) => {
+        if (!res.ok) throw new Error("API load failed")
+        return res.json()
+      })
+      .then((data) => {
+        if (data && !data.error) {
+          setContent(data)
+          loadedContentRef.current = data
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load content from API, falling back to local storage cache:", err)
+        const savedContent = localStorage.getItem("portfolio_content")
+        if (savedContent) {
+          try {
+            const parsed = JSON.parse(savedContent)
+            setContent(parsed)
+            loadedContentRef.current = parsed
+          } catch (e) {
+            console.error("Failed to parse fallback cache content", e)
+          }
+        } else {
+          loadedContentRef.current = initialContent
+        }
+      })
   }, [])
 
   const handleLogin = (e: React.FormEvent) => {
@@ -237,11 +256,31 @@ export default function AdminPage() {
     sessionStorage.removeItem("admin_auth")
   }
 
-  const saveContent = () => {
+  const saveContent = async () => {
+    // Keep local storage as local cache/backup
     localStorage.setItem("portfolio_content", JSON.stringify(content))
-    loadedContentRef.current = content
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    
+    try {
+      const res = await fetch("/api/content", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(content),
+      })
+      
+      if (!res.ok) {
+        throw new Error("Server failed to save")
+      }
+      
+      loadedContentRef.current = content
+      setSaved(true)
+    } catch (err) {
+      console.error("Failed to save to database:", err)
+      alert("Failed to save changes to server database! Local storage cache updated.")
+    } finally {
+      setTimeout(() => setSaved(false), 2000)
+    }
   }
 
   const updateProfile = (field: string, value: string | string[]) => {
@@ -838,6 +877,67 @@ export default function AdminPage() {
                       onChange={(e) => updateProject(project.id, "live", e.target.value)}
                       className="glass border-border/50 focus:border-[#00C9FF] bg-[#0a1628]/80 text-white placeholder:text-gray-500 text-sm"
                     />
+                    
+                    {/* Project Thumbnail Image Uploader */}
+                    <div className="space-y-1.5 pt-1">
+                      <Label className="text-xs text-muted-foreground font-medium">Project Image</Label>
+                      <div className="flex gap-2 items-center">
+                        {project.thumbnail ? (
+                          <img 
+                            src={project.thumbnail} 
+                            alt="Project thumbnail" 
+                            className="w-12 h-8 object-cover rounded border border-[#00C9FF]/30 shrink-0"
+                          />
+                        ) : (
+                          <div className="w-12 h-8 bg-[#0a1628] border border-dashed border-muted-foreground/30 rounded flex items-center justify-center shrink-0">
+                            <Upload className="h-3.5 w-3.5 text-muted-foreground" />
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (!file) return
+                            if (file.size > 500 * 1024) {
+                              alert("Project image size exceeds 500KB limit!")
+                              return
+                            }
+                            const reader = new FileReader()
+                            reader.onload = (event) => {
+                              const base64 = event.target?.result as string
+                              if (base64) {
+                                updateProject(project.id, "thumbnail", base64)
+                              }
+                            }
+                            reader.readAsDataURL(file)
+                          }}
+                          className="hidden"
+                          id={`project-file-${project.id}`}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => document.getElementById(`project-file-${project.id}`)?.click()}
+                          className="glass border-border/50 text-[11px] h-8 px-2.5 flex-1 justify-center animate-none"
+                        >
+                          Upload Image
+                        </Button>
+                        {project.thumbnail && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => updateProject(project.id, "thumbnail", "")}
+                            className="h-8 w-8 hover:bg-red-500/10 hover:text-red-400 shrink-0"
+                            aria-label="Remove image"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

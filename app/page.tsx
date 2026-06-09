@@ -52,14 +52,29 @@ export default function Home() {
   const [content, setContent] = useState(initialContent)
 
   useEffect(() => {
-    const savedContent = localStorage.getItem("portfolio_content")
-    if (savedContent) {
-      try {
-        setContent(JSON.parse(savedContent))
-      } catch (e) {
-        console.error("Failed to parse saved content", e)
-      }
-    }
+    // Load content dynamically from backend API
+    fetch("/api/content")
+      .then((res) => {
+        if (!res.ok) throw new Error("API load failed")
+        return res.json()
+      })
+      .then((data) => {
+        if (data && !data.error) {
+          setContent(data)
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch custom content:", err)
+        // Fallback to local storage cache if API is offline/not ready
+        const savedContent = localStorage.getItem("portfolio_content")
+        if (savedContent) {
+          try {
+            setContent(JSON.parse(savedContent))
+          } catch (e) {
+            console.error("Failed to parse fallback cache content", e)
+          }
+        }
+      })
   }, [])
 
   return (
