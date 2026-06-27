@@ -192,7 +192,7 @@ export function Hero({ profile }: HeroProps) {
                   src={profile.profileImage}
                   alt={profile.name}
                   fill
-                  unoptimized
+                  sizes="(max-width: 640px) 214px, (max-width: 1024px) 222px, 230px"
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
                   priority
                 />

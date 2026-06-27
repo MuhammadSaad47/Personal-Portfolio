@@ -183,7 +183,9 @@ function ProjectCard({
             src={project.thumbnail}
             alt={project.title}
             fill
-            unoptimized
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMGExNjI4Ii8+PC9zdmc+"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             onError={() => setImageError(true)}
           />
